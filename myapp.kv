@@ -1,0 +1,40 @@
+<MainScreen>:
+    grid_content: grid_layout
+
+    BoxLayout:
+        orientation: 'vertical'
+
+        Label:
+            text: 'Вопросы и ответы'
+            font_size: 24
+            size_hint_y: None
+            height: 60
+
+        ScrollView:
+            size: self.size
+
+            GridLayout:
+                id: grid_layout
+                cols: 2
+                spacing: 10
+                padding: 20
+                size_hint_y: None
+                height: self.minimum_height
+
+        BoxLayout:
+            size_hint_y: None
+            height: 60
+            spacing: 10
+            padding: 10
+
+            Button:
+                text: 'Регистрация'
+                on_press: root.show_form()
+
+            Button:
+                text: 'Перейти к вопросам'
+                on_press: root.load_questions()
+
+            Button:
+                text: 'Очистить'
+                on_press: root.clear_grid()
