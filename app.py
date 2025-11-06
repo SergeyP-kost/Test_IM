@@ -25,7 +25,8 @@ SUBJECTS = {
     "math": "Математика", 
     "russian": "Русский язык", 
     "history": "История",
-    "biology": "Биология"
+    "biology": "Биология",
+    "IT": "Информатика"
     }
 
 
@@ -303,7 +304,7 @@ class TestIMApp(MDApp):
         # 'Yellow', 'Amber', 'Orange', 'DeepOrange', 'Brown', 'Gray', 'BlueGray'
         
         # Стиль темы
-        self.theme_cls.theme_style = "Dark"
+        self.theme_cls.theme_style = "Dark" # Light
         
         # Дополнительные настройки
         self.theme_cls.primary_hue = "500"
