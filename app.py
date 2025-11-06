@@ -1,42 +1,85 @@
-from kivy.app import App
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.properties import ObjectProperty
+from kivymd.app import MDApp
+from kivy.core.window import Window
+from kivy.lang import Builder
+from kivy.utils import get_color_from_hex
+from kivymd.uix.screen import MDScreen
+from kivymd.uix.screenmanager import MDScreenManager
+from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.spinner import Spinner
 from kivy.uix.popup import Popup
-from kivy.uix.label import Label
+from kivymd.uix.textfield import MDTextField
+from kivymd.uix.label import MDLabel
 
-class MainScreen(Screen):
+
+Window.size = (480, 853)
+
+Builder.load_file('screens/start_screen.kv')
+Builder.load_file('screens/main_screen.kv')
+Builder.load_file('screens/registration_screen.kv')
+
+
+class StartScreen(MDScreen):
+    def start_app(self):
+        self.manager.current = 'registration'
+
+
+class RegistrationScreen(MDScreen):
+
+    name = StringProperty("")
+    surname = StringProperty("")
+    class_name = StringProperty("")
+    subject = StringProperty("")
+
+    def register_user(self):
+        self.manager.current = 'main'
+
+
+class MainScreen(MDScreen):
     grid_content = ObjectProperty(None)
+    spinners = []
+    questions = []
 
     def on_kv_post(self, widget):
         self.load_questions()
 
     def load_questions(self):
+        button = self.ids.questions_button
+        button.text = 'Завершить'
+
         self.clear_grid()
+        self.spinners = {}
+        self.questions = []
+
         file_path = 'example.txt'
-        questions = []
 
         try:
             with open(file_path, 'r', encoding='utf-8') as file:
                 for line in file:
                     parts = line.strip().split(',')
-                    if len(parts) >= 2:
+                    if len(parts) >= 3:
                         question = parts[0]
-                        answers = parts[1:]
-                        questions.append((question, answers))
+                        right_answer = parts[1]
+                        answers = parts[2:]
+
+                        self.questions.append({
+                            "question": question,
+                            "right_answer": right_answer,
+                            "answers": answers
+                        })
+ 
         except FileNotFoundError:
             self.show_file_not_found_popup(file_path)
 
-        for question, answers in questions:
+        for question_index, question in enumerate(self.questions):
             self.grid_content.add_widget(
-                self.create_label(question, halign='left')
+                self.create_label(question["question"], halign='left')
             )
             self.grid_content.add_widget(
-                self.create_spinner(answers)
-            )
+                self.create_spinner(
+                    question["answers"], question_index))
 
     def show_file_not_found_popup(self, file_path):
-        content = Label(
+        content = MDLabel(
             text=f"Файл с вопросами не найден:\n{file_path}",
             halign='center',
             valign='middle',
@@ -51,10 +94,10 @@ class MainScreen(Screen):
         popup.open()
 
     def create_label(self, text, **kwargs):
-        from kivy.uix.label import Label
-        label = Label(
+
+        label = MDLabel(
             text=text,
-            halign=kwargs.get('halign', 'center'),
+            halign=kwargs.get('halign', 'right'),
             valign='middle',
             size_hint_y=None,
             height=60,
@@ -63,57 +106,84 @@ class MainScreen(Screen):
         label.bind(size=label.setter('text_size'))
         return label
 
-    def create_spinner(self, options):
+    def create_spinner(self, options, question_index):
         spinner = Spinner(
-            text='Выберите ответ',  # Текст по умолчанию
-            values=options,       # Список вариантов
+            text='Выберите ответ',
+            values=options,  
             size_hint_y=None,
             height=60,
-            background_color=(0.8, 0.8, 1, 1),  # Светло‑синий фон
-            color=(0, 0, 0, 1)  # Чёрный текст
+            background_color=self.theme_cls.primary_color,  # Основной цвет темы
+            background_normal='',  # Убираем стандартный фон
+            color=(1, 1, 1, 1),  # Белый текст
+            # background_down=self.theme_cls.primary_dark,  # Темнее при нажатии
         )
-        # Обработчик выбора (можно расширить)
-        spinner.bind(text=self.on_spinner_select)
+
+        spinner.bind(text=lambda instance, value: self.on_spinner_select(
+            instance, value, question_index)
+            )
         return spinner
 
-    def on_spinner_select(self, spinner, text):
-        print(f"Выбран ответ: {text}")
-        # Здесь можно добавить логику проверки правильности и т.п.
+    def on_spinner_select(self, spinner, text, question_index):
+        self.spinners[question_index] = text
+        if self.questions[question_index]["right_answer"] == text:
+            print("Верный ответ!!!")
+            print(f"Вопрос {question_index+1}: Выбран ответ: {text}")
+        print(self.spinners)
+    
+    # def create_textinput(self, hint_text, helper_text=""):
 
-    def create_button(self, text):
-        from kivy.uix.button import Button
-        return Button(
-            text=text,
-            size_hint_y=None,
-            height=60
-        )
+    #     textinput = MDTextField(
+    #         hint_text=hint_text,
+    #         helper_text=helper_text,
+    #         # helper_text_mode="on_error",
+    #         size_hint_y=None,
+    #         height=60,
+    #         size_hint_x=0.5,
+    #         multiline=False,
+    #         padding=[10, 10]
+    #     )
+    #     return textinput
 
-    def show_form(self):
-        self.ids.grid_layout.clear_widgets()
-        self.ids.grid_layout.add_widget(self.create_label('Имя:'))
-        self.ids.grid_layout.add_widget(self.create_button('Ввести имя'))
-        self.ids.grid_layout.add_widget(self.create_label('Email:'))
-        self.ids.grid_layout.add_widget(self.create_button('Ввести email'))
-        self.ids.grid_layout.add_widget(self.create_label('Возраст:'))
-        self.ids.grid_layout.add_widget(self.create_button('Выбрать возраст'))
-
-    def show_table(self):
-        self.ids.grid_layout.clear_widgets()
-        for i in range(3):
-            for j in range(2):
-                text = f'Ряд {i+1}, Кол {j+1}'
-                self.ids.grid_layout.add_widget(self.create_button(text))
+    # def show_form(self):
+    #     self.ids.grid_layout.clear_widgets()
+    #     self.ids.grid_layout.add_widget(self.create_textinput('Имя'))
+    #     self.ids.grid_layout.add_widget(self.create_textinput('Фамилия'))
+    #     self.ids.grid_layout.add_widget(self.create_textinput('Класс', 'например 5а'))
+        # self.ids.grid_layout.add_widget(self.create_button('Предмет'))
+    
+    def accept_answers(self):
+        pass
 
     def clear_grid(self):
         self.ids.grid_layout.clear_widgets()
+    
+    def exit_app(self):
+        MDApp.get_running_app().stop()
 
-class MyApp(App):
+
+class TestIMApp(MDApp):
     questions = []
+    def get_hex_color(self, hex_color):
+        return get_color_from_hex(hex_color)
 
     def build(self):
-        sm = ScreenManager()
+        # Цветовая схема
+        self.theme_cls.primary_palette = "Teal"
+        self.theme_cls.accent_palette = "Orange"
+        
+        # Стиль темы
+        self.theme_cls.theme_style = "Light"  # или "Light" "Dark"
+        
+        # Дополнительные настройки
+        self.theme_cls.primary_hue = "500"    # Оттенок основного цвета
+        self.theme_cls.accent_hue = "200"     # Оттенок акцентного цвета
+        
+        sm = MDScreenManager()
+        sm.add_widget(StartScreen(name='start'))
+        sm.add_widget(RegistrationScreen(name='registration'))
         sm.add_widget(MainScreen(name='main'))
         return sm
 
+
 if __name__ == '__main__':
-    MyApp().run()
+    TestIMApp().run()

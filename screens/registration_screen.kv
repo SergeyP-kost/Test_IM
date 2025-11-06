@@ -1,0 +1,59 @@
+<RegistrationScreen>:
+
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        ScrollView:
+
+            MDBoxLayout:
+                orientation: 'vertical'
+                spacing: "20dp"
+                padding: "10dp"
+                adaptive_height: True
+
+                MDCard:
+                    orientation: 'vertical'
+                    padding: "24dp"
+                    spacing: "16dp"
+                    elevation_level: 3
+                    radius: [15, 15, 15, 15]
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    MDLabel:
+                        text: "Данные для регистрации"
+                        halign: "center"
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                        bold: True
+
+                    MDTextField:
+                        id: name_field
+                        hint_text: "Имя"
+                        icon_left: "account"
+                        size_hint_y: None
+                        height: "56dp"
+
+                    MDTextField:
+                        id: surname_field
+                        hint_text: "Фамилия"
+                        icon_left: "account-outline"
+                        size_hint_y: None
+                        height: "56dp"
+
+                    MDTextField:
+                        id: class_field
+                        hint_text: "Класс (например: 5а)"
+                        icon_left: "numeric"
+                        size_hint_y: None
+                        height: "56dp"
+
+                # Кнопка регистрации
+                MDFillRoundFlatIconButton:
+                    text: "Начать тестирование"
+                    icon: "library"
+                    size_hint: None, None
+                    size: "250dp", "60dp"
+                    pos_hint: {'center_x': 0.5}
+                    font_size: '16sp'
+                    on_release: root.register_user()

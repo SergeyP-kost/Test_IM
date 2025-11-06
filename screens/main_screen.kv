@@ -1,0 +1,49 @@
+<MainScreen>:
+    grid_content: grid_layout
+
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 10
+        padding: 10
+
+        MDLabel:
+            text: 'TestIM'
+            font_style: 'H4'
+            size_hint_y: None
+            height: 60
+            halign: 'center'
+            theme_text_color: 'Primary'
+
+        ScrollView:
+            scroll_type: ['bars', 'content']
+            bar_width: 10
+
+            GridLayout:
+                id: grid_layout
+                cols: 2
+                spacing: 10
+                padding: 20
+                size_hint_y: None
+                height: self.minimum_height
+                row_default_height: 60
+                row_force_default: False
+
+        BoxLayout:
+            size_hint_y: None
+            height: 60
+            spacing: 10
+            padding: 10
+
+            MDFillRoundFlatIconButton:
+                id: questions_button
+                text: 'Перейти к вопросам'
+                icon: "brain"
+                on_press:
+                    root.load_questions() if self.text == 'Перейти к вопросам' else root.accept_answers()
+                size_hint_x: 0.4
+
+            MDFillRoundFlatIconButton:
+                text: 'Выход'
+                icon: ""
+                on_press: root.exit_app()
+                size_hint_x: 0.3

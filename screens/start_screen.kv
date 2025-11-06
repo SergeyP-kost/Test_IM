@@ -1,0 +1,43 @@
+<StartLabel@MDLabel>:
+    halign: 'center'
+    valign: 'middle'
+
+<StartScreen>:
+    
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: "50dp"
+        spacing: "40dp"
+
+        # Заголовок
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: 0.4
+            spacing: "10dp"
+
+            StartLabel:
+                text: "TestIM"
+                font_style: 'H2'
+                theme_text_color: 'Primary'
+
+            StartLabel:
+                text: "Testing Intelligence and Mind"
+                font_style: 'Subtitle1'
+                theme_text_color: 'Secondary'
+
+        # Центральная кнопка
+        MDFillRoundFlatIconButton:
+            text: "Начать тестирование"
+            icon: "book"
+            size_hint: None, None
+            size: "250dp", "60dp"
+            pos_hint: {'center_x': 0.5}
+            font_size: '16sp'
+            on_release: root.start_app()
+
+        # Подвал
+        StartLabel:
+            text: "2025"
+            font_style: 'Overline'
+            theme_text_color: 'Secondary'
+            size_hint_y: 0.1
