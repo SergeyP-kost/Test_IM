@@ -48,6 +48,18 @@
                         size_hint_y: None
                         height: "56dp"
 
+                    MDFillRoundFlatButton:
+                        id: button
+                        text: "Выбор предмета тестирования"
+                        size_hint: None, None
+                        size: "250dp", "60dp"
+                        pos_hint: {'center_x': 0.5}
+                        font_size: '16sp'
+                        on_release: root.menu_subjects()
+                    MDLabel:
+                        id: err_sub
+                        text: ""
+
                 # Кнопка регистрации
                 MDFillRoundFlatIconButton:
                     text: "Начать тестирование"
