@@ -1,49 +1,58 @@
 <MainScreen>:
     grid_content: grid_layout
 
-    BoxLayout:
+    MDBoxLayout:
         orientation: 'vertical'
-        spacing: 10
-        padding: 10
+        spacing: "10dp"
+        padding: "10dp"
 
         MDLabel:
-            text: 'TestIM'
-            font_style: 'H4'
+            text: 'Тестирование'
+            font_style: 'H5'
             size_hint_y: None
-            height: 60
+            height: "60dp"
             halign: 'center'
             theme_text_color: 'Primary'
+            bold: True
 
         ScrollView:
             scroll_type: ['bars', 'content']
-            bar_width: 10
+            bar_width: "8dp"
+            bar_color: app.theme_cls.primary_color
 
             GridLayout:
                 id: grid_layout
                 cols: 2
-                spacing: 10
-                padding: 20
+                spacing: "15dp"
+                padding: "20dp"
                 size_hint_y: None
                 height: self.minimum_height
-                row_default_height: 60
+                row_default_height: "60dp"
                 row_force_default: False
 
-        BoxLayout:
+        MDBoxLayout:
             size_hint_y: None
-            height: 60
-            spacing: 10
-            padding: 10
+            height: "60dp"
+            spacing: "10dp"
+            padding: "10dp"
 
-            MDFillRoundFlatIconButton:
+            MDRaisedButton:
+                text: 'Назад к регистрации'
+                on_press: 
+                    root.manager.current = 'registration'
+                size_hint_x: 0.35
+
+            MDRaisedButton:
                 id: questions_button
-                text: 'Перейти к вопросам'
-                icon: "brain"
-                on_press:
-                    root.load_questions() if self.text == 'Перейти к вопросам' else root.accept_answers()
+                text: 'Завершить тест'
+                on_press: root.accept_answers()
                 size_hint_x: 0.4
+                md_bg_color: app.theme_cls.accent_color
 
-            MDFillRoundFlatIconButton:
+            Widget:
+                size_hint_x: 0.1
+
+            MDRaisedButton:
                 text: 'Выход'
-                icon: ""
                 on_press: root.exit_app()
-                size_hint_x: 0.3
+                size_hint_x: 0.15
